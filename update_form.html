@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Update Task</h2>
+
+    <form id="updateForm">
+        <input type="hidden" id="taskId" value="{{ todo['id'] }}">
+
+        <label for="updateName">Name:</label>
+        <input type="text" id="updateName" value="{{ todo['name'] }}" required>
+
+        <label for="updateDescription">Description:</label>
+        <input type="text" id="updateDescription" value="{{ todo['description'] }}">
+
+        <label for="updateDeadline">Deadline:</label>
+        <input type="date" id="updateDeadline" value="{{ todo['deadline'] }}">
+
+        <button type="button" onclick="updateTask()">Update Task</button>
+    </form>
+
+    <script>
+        function updateTask() {
+            var taskId = document.getElementById('taskId').value;
+
+            var updatedName = document.getElementById('updateName').value;
+            var updatedDescription = document.getElementById('updateDescription').value;
+            var updatedDeadline = document.getElementById('updateDeadline').value;
+
+            var updatedData = {
+                "name": updatedName,
+                "description": updatedDescription,
+                "deadline": updatedDeadline
+            };
+
+            fetch(`/todos/${taskId}/update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update task.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Redirect to the main page after successful update
+                window.location.href = '/';
+            })
+            .catch(error => console.error('Error:', error.message));
+        }
+    </script>
+</body>
+</html>
